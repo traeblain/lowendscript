@@ -1195,7 +1195,39 @@ function 3proxyauth {
 	fi
 
 }
-######################################################################## 
+
+function git {
+	check_install git git
+}
+
+function makecert {
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` makecert [certificate-name]"
+	fi
+
+	check_install openssl openssl
+	openssl req -new -x509 -nodes -newkey rsa:2048 -out $1.crt -keyout $1.key
+	chmod 600 $1.key
+	chmod 600 $1.crt
+
+	if [ -d $/etc/nginx/ssl ]
+	then
+	else
+		echo "Directory /etc/nginx/ssl does not exists.  Creating..."
+		mkdir /etc/nginx/ssl/
+	fi
+	mv $1.key /etc/nginx/ssl/
+	mv $1.crt /etc/nginx/ssl/
+
+	echo "Certificate and Key generated, please add the following lines to NGINX config:"
+	echo "	ssl_certificate /etc/nginx/ssl/$1.crt;"
+	echo "	ssl_certificate_key /etc/nginx/ssl/$1.key;"
+}
+
+
+
+########################################################################
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
@@ -1264,6 +1296,12 @@ test)
 	;;
 info)
 	show_os_arch_version
+	;;
+makecert)
+	makecert
+	;;
+git)
+	install_git
 	;;
 system)
 	update_timezone
