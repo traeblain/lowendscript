@@ -1213,6 +1213,7 @@ function makecert {
 
 	if [ -d $/etc/nginx/ssl ]
 	then
+		#do nothing
 	else
 		echo "Directory /etc/nginx/ssl does not exists.  Creating..."
 		mkdir /etc/nginx/ssl/
